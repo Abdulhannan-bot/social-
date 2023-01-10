@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="POST" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="mb-3 mx-3 row">
+    
+    <div>
+      <h2>POST</h2>
+    </div>
+    <div class="post col-md-8">
+      {{ formset.management_form }}
+      {% for form in formset %}
+      {{ form.media }}
+      {{ form.post|safe }}
+      {% endfor %}
+    </div>
+  </div>
+  
+  <button type="submit" class="btn btn-primary ms-4">Submit</button>
+</form>
+
+
+{% endblock %}

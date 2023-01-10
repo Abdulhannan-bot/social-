@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .profile-pic {
+    width: 2rem;
+    height: 2rem;
+    margin: 0 auto;
+    border: 1px solid black;
+    border-radius: 50%;
+  }
+  
+  .hide {
+    display: none;
+  }
+
+  .comment-display {
+    max-height: 15rem;
+    overflow-y: scroll;
+  }
+</style>
+
+  <div class="row" style="vertical-align: top;">
+    {% if count %}
+    <div class="d-grid gap-2 d-md-block">
+      <button class="btn btn-primary mb-3" type="button"><a href="{% url 'add_post' %}" class="text-white" style="text-decoration: none;">Add Post</a></button>
+    </div>
+    <div class="col-md-8" style="max-height: 44rem; overflow-y: scroll;">
+      {% for post in posts %}
+      <div class="card">
+        <div class="row">
+          <div class="col ps-4 pt-2">
+            <div class="d-flex flex-row">
+              <div>
+                <img class="profile-pic" src="{{ post.user_id.profile_pic.url }}">
+              </div>
+              {% if post.user_id == request.user.account %}
+              <p class="ps-2">You posted this</p>
+              {% else %}
+              <p class="ps-2">{{ post.user_id }}</p>
+              {% endif %}
+            </div>
+            <hr>
+            <div>
+              {{ post.post|safe }}
+            </div>
+            <hr>
+            {% if post.user_id != request.user.account %}
+            <div>
+              {% if post.post in likes_list %}
+              <a href="{% url 'unlike' id=post.id %}" class="btn btn-small btn-primary">UnLike</a> 
+              {% else %}
+              <a href="{% url 'likes' id=post.id %}" class="btn btn-small btn-primary">Like</a>
+              {% endif %}
+              <a href="" class="btn-comment btn btn-small btn-primary">Comment</a>
+              <div class="comments-text hide">
+                <br>
+                <button type="submit" class="btn btn-sm btn-primary"><a href="{% url 'add_comment' id=post.id %}" class="text-white" style="text-decoration: none;">Add comment</a></button>
+                <br>
+                <!-- {% for i in post.comment_set.all %}
+                  <p>{{ i.text }}</p>
+                {% endfor %} -->
+                <br>
+                <div class="comment-display">
+                  {% for i in post.comment_set.all %}
+                  {% if i.user_id == request.user.account %}
+                  <p class="border-bottom">you</p>
+                  {% else %}
+                  <p class="border-bottom">{{ i.user_id }}</p>
+                  {% endif %}
+                  <p>{{ i.text }}</p>
+                  <br>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <div>
+              <a href="" class="btn-comment btn btn-small btn-primary">View Comments</a>
+              <div class="comments-text hide">
+                <br>
+                <div class="comment-display">
+                  {% for i in post.comment_set.all %}
+                  {% if i.user_id == request.user.account %}
+                  <p class="border-bottom">you</p>
+                  {% else %}
+                  <p class="border-bottom">{{ i.user_id }}</p>
+                  {% endif %}
+                  <p>{{ i.text }}</p>
+                  <br>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            <hr>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="col-md-4 col-12">
+    {% else %}
+    <div class="col-md-12 col-12">
+    {% endif %}
+        <div class="card-title">
+          <h3 class="ps-4 pt-3">Suggested for you</h3>
+        </div>
+      {% if count %}
+      <div class="card" style="max-height: 24rem; overflow-y: scroll;">
+      {% else %}
+      <div class="card">
+      {% endif %}
+        {% for acc in accounts %}
+        <div class="card-body">
+          <div class="d-flex flex-row justify-content-between">
+            <div>
+              <img class="profile-pic" src="{{ acc.profile_pic.url }}">
+              <a href="{% url 'follower_profile' id=acc.id %}" style="text-decoration: none;">{{ acc.user }}</a>
+            </div>
+            <a href="{% url 'add_followee' id=acc.id %}" class="btn btn-small btn-primary">Follow</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <br>
+      {% if count %}
+      <div class="card-title">
+        <h3 class="ps-4 pt-3">People you follow</h3>
+      </div>
+      <div class="card" style="max-height: 24rem; overflow-y: scroll;">
+          {% for follow in following %}
+          <div class="card-body">
+            <div class="d-flex flex-row justify-content-between">
+              <div>
+                <img class="profile-pic" src="{{ follow.followee_id.profile_pic.url }}">
+                <a href="{% url 'follower_profile' id=follow.followee_id.id %}" style="text-decoration: none;">{{ follow.followee_id }}</a>
+              </div>
+              <!-- <a href="{% url 'remove_followee' id=follow.followee_id.id %}" class="btn btn-small btn-primary">Unfollow</a> -->
+            </div>
+          </div>
+          {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    
+  </div>  
+<!-- </div> -->
+
+<script>
+  commentBody = document.querySelectorAll(`.comments-text`)
+  comment = document.querySelectorAll(`.btn-comment`)
+
+  comment.forEach((x,i) => {
+    x.addEventListener('click', (e) => {
+      e.preventDefault()
+      commentBody[i].classList.toggle('hide');
+    })
+  })
+</script>
+
+{% endblock %}

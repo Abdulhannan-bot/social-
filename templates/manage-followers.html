@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .profile-pic {
+    width: 5rem;
+    height: 5rem;
+    margin: 0 auto;
+    border: 1px solid black;
+    border-radius: 50%;
+  }
+</style>
+
+<div class="caontainer">
+  <div class="card mb-3 p-5">
+    <div class="row g-0">
+      <div class="col-md-2">
+        <img class="profile-pic" src="{{ account.profile_pic.url }}" class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-9">
+        <div class="card-body">
+          <h1 class="card-title">{{ account.user }}</h1>
+          <div class="d-flex justify-content-evenly">
+            <p><span>0</span> Likes</p>
+            <p><span>{{ followers }}</span> Followers</p>
+            <p><span>{{ following }}</span> Following</p>
+          </div>
+          <a href="{% url 'add_follower' id=account.id %}" class="btn btn-small btn-primary">Follow</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

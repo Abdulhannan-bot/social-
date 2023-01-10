@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="POST" action="">
+  {% csrf_token %}
+  <div class="mb-3 mx-3 row">
+    
+    <div>
+      <h2>Comment</h2>
+    </div>
+    <div class="post col-md-8">
+      {{ form.text }}
+    </div>
+  </div>
+  
+  <button type="submit" class="btn btn-primary ms-4">Submit</button>
+</form>
+
+
+{% endblock %}
